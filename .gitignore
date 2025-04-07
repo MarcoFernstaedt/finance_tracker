@@ -1,0 +1,40 @@
+# ---- General ----
+*.log
+*.pot
+*.pyc
+__pycache__/
+env/
+venv/
+.env
+.DS_Store
+.idea/
+.vscode/
+*.sqlite3
+
+# ---- Django ----
+db.sqlite3
+/media
+/staticfiles
+/local_settings.py
+*.py[cod]
+*.sqlite3
+*.db
+*.pyo
+*.pyd
+*.egg-info/
+instance/
+.mypy_cache/
+.pytest_cache/
+.coverage
+
+# ---- React (assuming it's in /frontend) ----
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.eslintcache
+frontend/.parcel-cache/
+frontend/dist/
+
+# ---- OS-specific ----
+Thumbs.db
+ehthumbs.db
