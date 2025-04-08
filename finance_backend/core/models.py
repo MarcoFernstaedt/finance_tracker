@@ -1,21 +1,50 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 
-class TransactionCategory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class CustomUser(AbstractUser):
+    email = models.EmailField(_("email address"), unique=True)
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
+
+    def __str__(self):
+        return f"{self.username} - {self.email}"
+
+
+class TimeStampedModel(models.Model):
+    """
+    Abstract model to add created_at and updated_at timestamps.
+    """
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class TransactionCategory(TimeStampedModel):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="categories"
+    )
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
 
-class Transaction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(TransactionCategory, on_delete=models.CASCADE)
+class Transaction(TimeStampedModel):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="transactions"
+    )
+    category = models.ForeignKey(
+        TransactionCategory, on_delete=models.CASCADE, related_name="transactions"
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=timezone.now)
     type = models.CharField(
         max_length=10, choices=(("income", "Income"), ("expense", "Expense"))
     )
@@ -24,9 +53,13 @@ class Transaction(models.Model):
         return f"{self.type.capitalize()} - ${self.amount}"
 
 
-class Budget(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(TransactionCategory, on_delete=models.CASCADE)
+class Budget(TimeStampedModel):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="budgets"
+    )
+    category = models.ForeignKey(
+        TransactionCategory, on_delete=models.CASCADE, related_name="budgets"
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     month = models.DateField()
 
