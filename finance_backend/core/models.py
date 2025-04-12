@@ -67,3 +67,23 @@ class Budget(TimeStampedModel):
         return (
             f"{self.category.name} - ${self.amount} for {self.month.strftime('%B %Y')}"
         )
+
+
+class LimitAlert(TimeStampedModel):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="limit_alerts"
+    )
+    category = models.ForeignKey(
+        TransactionCategory, on_delete=models.CASCADE, related_name="limit_alerts"
+    )
+    threshold = models.DecimalField(max_digits=10, decimal_places=2)
+    alert_type = models.CharField(
+        max_length=14,
+        choices=(
+            ("email", "Email"),
+            ("sms", "SMS"),
+        ),
+    )
+
+    def __str__(self):
+        return f"{self.category.name} - {self.alert_type.capitalize()} Alert at ${self.threshold}"
