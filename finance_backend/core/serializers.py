@@ -1,4 +1,4 @@
-from .models import CustomUser, Transaction, TransactionCategory, Budget
+from .models import CustomUser, Transaction, TransactionCategory, Budget, LimitAlert
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -39,7 +39,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = "__all__"
-        read_only_fields = ["user", "created_at", "updated_at"]
+        read_only_fields = ["user", "category", "created_at", "updated_at"]
 
 
 class TransactionCategorySerializer(serializers.ModelSerializer):
@@ -51,7 +51,7 @@ class TransactionCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TransactionCategory
         fields = "__all__"
-        read_only_fields = ["user", "created_at", "updated_at"]
+        read_only_fields = ["user", "category", "created_at", "updated_at"]
 
 
 class BudgetSerializer(serializers.ModelSerializer):
@@ -63,4 +63,15 @@ class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Budget
         fields = "__all__"
-        read_only_fields = ["user", "created_at", "updated_at"]
+        read_only_fields = ["user", "category", "created_at", "updated_at"]
+
+
+class LimitAlertSerializer(serializers.ModelSerializer):
+    """
+    Serializer for LimitAlert model.
+    """
+
+    class Meta:
+        model = LimitAlert
+        fields = "__all__"
+        read_only_fields = ["user", "category", "created_at", "updated_at"]
