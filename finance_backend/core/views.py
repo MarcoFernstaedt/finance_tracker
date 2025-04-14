@@ -173,3 +173,29 @@ class LimitAlertViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class PlaidAuthView(APIView):
+    """
+    Handle plaid authentication.
+    This view is responsible for handling the plaid authentication process.
+    It receives the public token from the frontend, exchanges it for an access token,
+    and stores the access token in the database.
+    It also handles the case where the user is not authenticated.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        pass
+
+
+class GetPlaidTransactionViewSet(viewsets.ModelViewSet):
+    """
+    Handle plaid transactions.
+    This view is responsible for handling the plaid transaction process.
+    It receives the access token from the database, fetches the transactions from plaid,
+    and returns them to the frontend.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
