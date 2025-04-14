@@ -1,12 +1,14 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 from rest_framework import viewsets, permissions, status
-from .models import CustomUser, Transaction, TransactionCategory, Budget
+from .models import CustomUser, Transaction, TransactionCategory, Budget, LimitAlert
 from .serializers import (
     CustomUserSerializer,
     TransactionSerializer,
     TransactionCategorySerializer,
     BudgetSerializer,
+    LimitAlertSerializer,
 )
 from .permissions import IsAdminOrSelf, IsOwnerOrAdmin
 
@@ -28,7 +30,7 @@ class RegisterView(APIView):
 
 class CustomUserViewSet(viewsets.ModelViewSet):
     """
-    Allows admin to view all users. Regular users can only access their own account.
+    Allows admin to manage all users. Regular users can only access their own account.
     """
 
     serializer_class = CustomUserSerializer
@@ -41,10 +43,8 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         if not self.request.user.is_staff:
-            return Response(
-                {"detail": "You do not have permission to create a user."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+            raise PermissionDenied("You do not have permission to create a user.")
+        return super().create(request, *args, **kwargs)
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
@@ -57,8 +57,23 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Transaction.objects.all()
+            return Transaction.objects.none()
         return Transaction.objects.filter(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to create transactions.")
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to update transactions.")
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to delete transactions.")
+        return super().destroy(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -74,8 +89,23 @@ class TransactionCategoryViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return TransactionCategory.objects.all()
+            return TransactionCategory.objects.none()
         return TransactionCategory.objects.filter(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to create categories.")
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to update categories.")
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to delete categories.")
+        return super().destroy(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -91,8 +121,55 @@ class BudgetViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Budget.objects.all()
+            return Budget.objects.none()
         return Budget.objects.filter(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to create budgets.")
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to update budgets.")
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to delete budgets.")
+        return super().destroy(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class LimitAlertViewSet(viewsets.ModelViewSet):
+    """
+    Handles CRUD operations for limit alerts.
+    """
+
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+    serializer_class = LimitAlertSerializer
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return LimitAlert.objects.none()
+        return LimitAlert.objects.filter(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to create limit alerts.")
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to update limit alerts.")
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            raise PermissionDenied("Admins are not allowed to delete limit alerts.")
+        return super().destroy(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
