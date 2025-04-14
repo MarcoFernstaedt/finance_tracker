@@ -6,6 +6,7 @@
 
 ## Current Features
 
+- **Authentication**: Authenticate users with jwt
 - **Expense Tracking**: Log and categorize expenses to monitor spending habits.
 - **Budget Management**: Set budgets for specific categories and track progress.
 
@@ -35,7 +36,7 @@
 
 ## Technology Stack
 
-- **Backend**: Python, Django
+- **Backend**: Python, Django, rest_framework, rest_framework_simlejwt
 - **Database**: Sqlite (to be upgraded to PostgreSQL)
 - **Task Queue**: Celery with Redis
 - **API Integration**: Plaid API, OpenAI GPT
