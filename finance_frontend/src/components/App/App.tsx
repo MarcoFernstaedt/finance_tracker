@@ -1,13 +1,19 @@
-import { Button } from '../ui/button'
+import { useState } from 'react'
+import Footer from '../Footer/Footer'
+import Header from '../Header/Header'
 import './App.css'
 
 const App = () => {
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
-    <div className='text-9xl text-blue-500 bg-black p-50 justify-center flex items-center'>
-      <Button variant={'destructive'} >Delete</Button>
-    </div>
+    <>
+      <Header loggedIn={isLoggedIn} />
+      <main className='min-h-screen flex flex-col justicy-center items-center w-screen h-screen bg-black'>
+        <h1 className="text-4xl text-red-500">Hello</h1>
+      </main>
+      <Footer />
+    </>
   )
 }
 
