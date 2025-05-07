@@ -28,12 +28,12 @@ instance/
 .coverage
 
 # ---- React (assuming it's in /frontend) ----
-frontend/node_modules/
-frontend/build/
-frontend/.env
-frontend/.eslintcache
-frontend/.parcel-cache/
-frontend/dist/
+finance_frontend/node_modules/
+finance_frontend/build/
+finance_frontend/.env
+finance_frontend/.eslintcache
+finance_frontend/.parcel-cache/
+finance_frontend/dist/
 
 # ---- OS-specific ----
 Thumbs.db
