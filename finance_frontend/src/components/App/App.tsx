@@ -2,8 +2,9 @@ import { useState } from 'react'
 import Footer from '../Footer/Footer'
 import Header from '../Header/Header'
 import './App.css'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from '../ProtectedRoute'
+import SignInPage from '../SignInPage/SignInPage'
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,30 +21,40 @@ const App = () => {
             </main>
           }
         />
-        {/* <Route
+        <Route
           path='/dashboard'
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <Dashboard />
+              {/* <Dashboard /> */}
+              <h1>Dashbaord</h1>
             </ProtectedRoute>
           }
-        /> */}
-        {/* <Route
+        />
+        <Route
           path='/account'
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <Account />
+              {/* <Account /> */}
+              <h1>Account</h1>
             </ProtectedRoute>
           }
-        /> */}
-        {/* <Route
+        />
+        <Route
           path='/transactions'
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <Transactions />
+              {/* <Transactions /> */}
+              <h1>Transactions</h1>
             </ProtectedRoute>
           }
-        /> */}
+        />
+        <Route
+          path='/sign-in'
+          element={
+            <SignInPage />
+          }
+        />
+        <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>
       <Footer />
     </>
