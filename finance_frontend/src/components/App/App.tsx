@@ -5,6 +5,7 @@ import './App.css'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from '../ProtectedRoute'
 import SignInPage from '../SignInPage/SignInPage'
+import SignUnPage from '../SignUpPage'
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -52,6 +53,12 @@ const App = () => {
           path='/sign-in'
           element={
             <SignInPage />
+          }
+        />
+        <Route
+          path='/sign-up'
+          element={
+            <SignUnPage />
           }
         />
         <Route path='*' element={<Navigate to='/' replace />} />
