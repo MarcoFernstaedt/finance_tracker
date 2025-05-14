@@ -2,12 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.tokens import RefreshToken, TokenObtainPairView, RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import TokenError
 from .serializers import CustomTokenObtainPairSerializer
 
 
-# Create your views here.
+# Register new user and return access token + set refresh cookie
 class RegisterView(APIView):
     def post(self, request):
         data = request.data
@@ -40,16 +41,18 @@ class RegisterView(APIView):
                 value=str(refresh),
                 httponly=True,
                 secure=False,  # Set to True in production
-                samesite="lax",
+                samesite="Lax",
             )
 
             return res
         except Exception as e:
             return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
+# Login view — returns access token and sets refresh cookie
 class LoginView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
@@ -62,28 +65,41 @@ class LoginView(TokenObtainPairView):
                 key="refresh_token",
                 value=refresh,
                 httponly=True,
-                secure=False,
-                samesite="lax",
+                secure=False,  # Set to True in production
+                samesite="Lax",
             )
-
             del response.data["refresh"]
 
         return response
 
+
+# Refresh access token using the refresh token in cookies
 class RefreshTokenView(APIView):
     def post(self, request):
-        token = request.COOKIES.get('refresh_token')
-        if not refresh_token:
-            return Response({'error': 'Refresh token not provided'}, status=status.HTTP_401_UNAUTHORIZED)
-        
+        token = request.COOKIES.get("refresh_token")
+        if not token:
+            return Response(
+                {"error": "Refresh token not provided"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         try:
-            refresh_token =  RefreshToken(token)
-            return Response(['access': str(refresh_token.access_token)], status=status.HTTP_200_OK)
+            refresh_token = RefreshToken(token)
+            return Response(
+                {"access": str(refresh_token.access_token)}, status=status.HTTP_200_OK
+            )
         except TokenError:
-            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
-        
+            return Response(
+                {"error": "Invalid or expired token"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+
+# Logout — removes the refresh_token cookie
 class LogoutView(APIView):
     def post(self, request):
-        response = Response({'message'}: 'Logged out successfully'), status=status.HTTP_205_RESET_CONTENT)
-        response.delete_dookie('refresh_token')
+        response = Response(
+            {"message": "Logged out successfully"}, status=status.HTTP_205_RESET_CONTENT
+        )
+        response.delete_cookie("refresh_token")
         return response
