@@ -81,3 +81,9 @@ class RefreshTokenView(APIView):
             return Response(['access': str(refresh_token.access_token)], status=status.HTTP_200_OK)
         except TokenError:
             return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response({'message'}: 'Logged out successfully'), status=status.HTTP_205_RESET_CONTENT)
+        response.delete_dookie('refresh_token')
+        return response
