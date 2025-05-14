@@ -6,7 +6,7 @@ interface RequestOptions extends RequestInit {
     withAuth?: boolean,
 }
 
-const apiRequest = async (
+export const apiRequest = async (
     endpoint: string,
     options: RequestOptions = {},
 ): Promise<any> => {
